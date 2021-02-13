@@ -1,0 +1,165 @@
+@import '~bootstrap/scss/_functions';
+@import '~bootstrap/scss/_variables';
+@import '~bootstrap/scss/_mixins';
+
+$enable-rounded: true;
+$secondary-color: #a5ba4d;  // green for login
+$danger-color: #b36044;  // red text
+$warning-color: #d99243; // yellow text
+
+$navbar-nav-link-padding-x: 1rem;
+
+
+.app {
+    background-color: #deeed9;
+    height: 100vh;
+}
+
+.material-header {
+    padding-top: $spacer;
+}
+.material-header h5 {
+    padding-left: $spacer;
+}
+
+.material {
+    padding-bottom: $spacer;
+}
+
+.text-center {
+    margin-top: $spacer * 2;
+}
+
+.about-img {
+    border-radius: 50%;
+}
+
+.about-text-block {
+    display: inline-block;
+}
+
+.about-text {
+    margin-top: $spacer * 2;
+    padding: $spacer;
+    background-color: #f6f6f6;
+    border-radius: 25px;
+    text-align: center;
+}
+
+.about-text-number {
+    z-index: 3;
+    left: 0rem;
+    bottom: 3rem;
+    position: absolute;
+    background-color: $warning-color;
+    border-radius: 50%;
+    width: 4rem;
+    line-height: 4rem;
+    text-align: center;
+}
+
+.form-control.material-select {
+    background: $secondary-color;
+}
+
+.form-control.material-select:focus {
+    background: $secondary-color;
+}
+
+.chart {
+    background-color: #f6f6f6;
+}
+
+.header-block {
+    background-color: #f6f6f6;
+    text-align: center;
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+    margin-top: $spacer;
+    padding-top: $font-size-base;
+    padding-bottom: $font-size-base;
+}
+
+.view-table {
+    height: 400px;
+}
+
+// sections for the About page
+.title-block {
+    background-color: #f6f6f6;
+    font-family: "Century Gothic", CenturyGothic, AppleGothic, sans-serif;
+    margin-top: $font-size-base * 3;
+    padding-top: $font-size-base;
+    padding-bottom: $font-size-base;
+
+    .initiative {
+        color: #b36044;
+        font-size: $font-size-base * 1.5;
+        font-weight: bold;
+        margin-left: 15%;
+    }
+
+    .title {
+        color: #0d363a;
+        font-size: $font-size-base * 3;
+        font-weight: bold;
+        margin-left: 15%;
+    }
+
+    .description {
+        color: #0d363a;
+        font-size: $font-size-base * 2;
+        font-weight: bold;
+        margin-left: 15%;
+    }
+}
+
+// circle buttons
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.428571429;
+  border-radius: 15px;
+}
+.btn-circle.btn-lg {
+  width: 50px;
+  height: 50px;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.33;
+  border-radius: 25px;
+}
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  font-size: 24px;
+  line-height: 1.33;
+  border-radius: 35px;
+}
+
+
+.navbar {
+    background-color: #f6f6f6;
+}
+
+// Array of colors from _variables.scss
+$theme-colors: (
+    primary: $primary,
+    secondary: $secondary-color,
+    //secondary: $gray-600,
+    success: $green,
+    info: $cyan,
+    warning: $warning-color,
+    danger: $danger-color,
+    light: $gray-100,
+    dark: $gray-800
+);
+
+@import '~bootstrap/scss/bootstrap';
+
+body {
+    background-color: #deeed9;
+}
