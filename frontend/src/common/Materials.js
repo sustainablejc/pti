@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Card, CardDeck, Form, Row, Col, InputGroup } from 'react-bootstrap';
+import { Alert, Button, Card, CardDeck, Form, Row, Col, InputGroup } from 'react-bootstrap';
 
 import axios from 'axios';
 
@@ -9,15 +9,20 @@ import axios from 'axios';
  */
 export function MaterialHeader(props) {
     return (<div className="material-header">
-        <Row>
-            <Col xs="1" />
-            <Col xs="3">
-                <h5>add a material</h5>
-            </Col>
-            <Col xs="3">
-                <h5>add an amount</h5>
-            </Col>
-        </Row>
+        <div className="d-none d-md-block">
+            <Row >
+                <Col md="1" />
+                <Col md="3">
+                    <h5>add a material</h5>
+                </Col>
+                <Col md="3">
+                    <h5>add an amount</h5>
+                </Col>
+            </Row>
+        </div>
+        <div className="d-block d-md-none">
+            <Row><h5>add a material and amount</h5></Row>
+        </div>
     </div>);
 }
 
@@ -35,15 +40,15 @@ export function Material(props) {
         {'id': 6, 'name': 'Trash', 'description': 'This is trash'},
     ];
 
-    const { add, index, handleChange, name, remove, values, isLast } = props;
+    const { add, index, handleChange, name, remove, values, isLast, error, dirty } = props;
     const material = values[index];
 
     return (<div className="material">
         <Form.Group as={Row}>
-            <Col xs="1">
+            <Col sm="1">
                 {isLast ? <button className="btn-circle btn-secondary" onClick={() => add()}>+</button> : ''}
             </Col>
-            <Col xs="3">
+            <Col sm="7" md="3">
                 <Form.Control
                         className="material-select"
                         as="select"
@@ -56,7 +61,7 @@ export function Material(props) {
                     })}
                 </Form.Control>
             </Col>
-            <Col xs="3">
+            <Col sm="7" md="3">
                 <InputGroup className="mb-1">
                     <Form.Control
                         name={`${name}.weight`}
@@ -64,7 +69,7 @@ export function Material(props) {
                         value={material.weight}
                         onChange={handleChange} />
                     <InputGroup.Append>
-                        <InputGroup.Text>lb.</InputGroup.Text>
+                        <InputGroup.Text>lbs</InputGroup.Text>
                     </InputGroup.Append>
                     <h4 style={{paddingLeft: '1rem', paddingRight: '1rem'}}> / </h4>
                     <Form.Control
@@ -77,10 +82,13 @@ export function Material(props) {
                     </InputGroup.Append>
                 </InputGroup>
             </Col>
-            <Col xs="1">
+            <Col sm="1">
             {index == 0
                 ? ''
                 : <button className="btn-circle btn-danger" onClick={() => remove(index)}>-</button>}
+            </Col>
+            <Col>
+            {(dirty && error != null) ? (<Alert variant="danger"> {error} </Alert>) : ''}
             </Col>
         </Form.Group>
     </div>);

@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import { Button, Form, Row, Col } from 'react-bootstrap';
 import ReactTable from '../common/ReactTable';
+import { useAuthState } from '../Context';
 
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
@@ -22,10 +23,12 @@ function firstDayOfWeek(datetime) {
 export function ViewWeeklyAssessments() {
 
     const [assessments, setAssessments] = useState([])
+    const {user, token} = useAuthState();
 
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/v1/weekly-assessment/`)
-            .then(res => {
+        axios.get('/api/v1/weekly-assessment/', {
+                headers: {'Authorization': 'Token ' + token}
+            }).then(res => {
                 setAssessments(res.data);
             }).catch(err => {
                 setAssessments([]);

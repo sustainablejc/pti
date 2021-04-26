@@ -11,10 +11,11 @@ import { About } from './About';
 import { Login } from './common/Login';
 import { Resources } from './resources/Resources';
 import { Apps } from './resources/Apps';
+import { useAuthState } from './Context';
 
 
 export function Navigation() {
-
+    const {user, token} = useAuthState();
     return (
       <>
         <Router>
@@ -25,8 +26,12 @@ export function Navigation() {
                         <Nav>
                             <Nav.Link as={Link} to="/">Home</Nav.Link>
                             <Nav.Link as={Link} to="/about">About</Nav.Link>
-                            <Nav.Link as={Link} to="/submit-weekly-assessment">Submit Weekly Assessment</Nav.Link>
-                            <Nav.Link as={Link} to="/view-weekly-assessments">View Weekly Assessments</Nav.Link>
+                            {(token == null || token == "")
+                                ? ''
+                                : <Nav.Link as={Link} to="/submit-weekly-assessment">Submit Weekly Assessment</Nav.Link>}
+                            {(token == null || token == "")
+                                ? ''
+                                : <Nav.Link as={Link} to="/view-weekly-assessments">View Weekly Assessments</Nav.Link>}
                             <Nav.Link as={Link} to="/">Add Goal</Nav.Link>
                             <Nav.Link as={Link} to="/">View Goals</Nav.Link>
                             <NavDropdown title="Learning Center">

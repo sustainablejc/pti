@@ -1,70 +1,49 @@
 /* global gapi */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 
 import { GoogleLogin, GoogleLogout, useGoogleLogin } from 'react-google-login';
+import { logout, loginSuccess, loginFailure, useAuthState, useAuthDispatch } from '../Context';
 
 
 export function Login(props) {
-    const [modalShow, setModalShow] = React.useState(false);
-    const [googleProfile, setGoogleProfile] = React.useState({});
-    const [accessToken, setAccessToken] = React.useState(null);
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    const [googleProfile, setGoogleProfile] = useState({});
 
     const clientId = "";
+    const dispatch = useAuthDispatch();
+    const {user, token} = useAuthState();
 
     const onSuccess = (e) => {
-        console.log(e);
-        setGoogleProfile(e.profileObj);
-        setAccessToken(e.accessToken);
-        setIsLoggedIn(true);
         axios.post(
-            'http://localhost:8000/rest-auth/google/',
+            '/rest-auth/google/',
             {access_token: e.accessToken}
         ).then(res => {
-            console.log(res);
-            axios.get(`http://localhost:8000/api/v1/weekly-assessment/`, {
-                headers: {'Authorization': 'Token ' + res.data.key}})
-                .then(res => {
-                    debugger;
-                }).catch(err => {
-                    debugger;
-                });
+            loginSuccess(dispatch, e.profileObj, res.data.key);
         }).catch(err => {
             console.log(err);
         });
     }
 
-    const onFailure = (e) => {
-        console.log(e);
-        setGoogleProfile({});
-        setAccessToken(null);
-        setIsLoggedIn(false);
-    }
-
     const { signIn } = useGoogleLogin({
         onSuccess,
-        onFailure,
         clientId,
+        onFailure: (e) => loginFailure(dispatch, e),
     });
 
-
-    /*
-        <Button variant="primary" onClick={() => setModalShow(true)}>
-            Login
-        </Button>
-    */
     return (
         <>
-        <Button variant="outline-secondary" onClick={signIn}>
-           Sign In 
-        </Button>
+            {(token == null || token == "")
+                ? (<Button variant="outline-secondary" onClick={signIn}>
+                    Sign In Google
+                    </Button>
+                )
+                : (<><div>Welcome {user.email}</div>
+                    <Button variant="outline-secondary" onClick={() => logout(dispatch)}>
+                    Log out
+                    </Button></>)
+            }
 
-        <LoginModal
-            show={modalShow}
-            onHide={() => setModalShow(false)}
-        />
         </>
     );
 }
@@ -94,28 +73,3 @@ function LoginModal(props) {
   );
 }
 
-
-function GoogleLoginComponent(props) {
-    const responseGoogle = (response) => {
-        console.log('here');
-        console.log(response);
-    }
-    return (
-        <GoogleLogin
-            clientId=""
-            buttonText="LOGIN WITH GOOGLE"
-            onSuccess={(e) => console.log(e)}
-            onFailure={(e) => console.log(e)}
-            onRequest={(e) => console.log(e)}
-        />
-    );
-}
-
-function GoogleLogoutComponent(props) {
-    const logout = (e) => {
-        console.log(e);
-    }
-    return (
-        <div>test</div>
-    );
-}

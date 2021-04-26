@@ -8,11 +8,12 @@ class WeeklyAssessmentView(viewsets.ModelViewSet):
     queryset = WeeklyAssessment.objects.all()
     serializer_class = WeeklyAssessmentSerializer
 
-    def get(self, request):
-        return super().get(request)
+    def get_queryset(self):
+        return WeeklyAssessment.objects.filter(user=self.request.user.id).all()
 
-    def list(self, request):
-        return super().list(request)
+    def perform_create(self, serializer):
+        user = self.request.user
+        return serializer.save(user=user)
 
 
 class MaterialList(generics.ListAPIView):

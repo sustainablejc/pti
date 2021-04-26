@@ -1,6 +1,9 @@
-@import '~bootstrap/scss/_functions';
-@import '~bootstrap/scss/_variables';
-@import '~bootstrap/scss/_mixins';
+//@import '~bootstrap/scss/_functions';
+//@import '~bootstrap/scss/_variables';
+//@import '~bootstrap/scss/_mixins';
+@import 'node_modules/bootstrap/scss/_functions';
+@import 'node_modules/bootstrap/scss/_variables';
+@import 'node_modules/bootstrap/scss/_mixins';
 
 $enable-rounded: true;
 $secondary-color: #a5ba4d;  // green for login
@@ -9,15 +12,26 @@ $warning-color: #d99243; // yellow text
 
 $navbar-nav-link-padding-x: 1rem;
 
+body{ height:100vh; margin:0; }
+
+footer{ min-height:30px; text-align: center }
 
 .app {
     background-color: #deeed9;
-    height: 100vh;
+    color: #0d363a;
+    //height: calc(100% - 20px);
+    padding-bottom: 30px;
 }
 
 .material-header {
     padding-top: $spacer;
 }
+
+.material-header .d-md-none .row {
+    text-align: center;
+    margin: auto;
+}
+
 .material-header h5 {
     padding-left: $spacer;
 }
@@ -60,6 +74,11 @@ $navbar-nav-link-padding-x: 1rem;
 
 .form-control.material-select {
     background: $secondary-color;
+
+    @media (max-width: 832px) {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 }
 
 .form-control.material-select:focus {
@@ -113,6 +132,11 @@ $navbar-nav-link-padding-x: 1rem;
     }
 }
 
+// weekly assessments page
+.container {
+    padding-bottom: 10px;
+}
+
 // circle buttons
 .btn-circle {
   width: 30px;
@@ -158,7 +182,8 @@ $theme-colors: (
     dark: $gray-800
 );
 
-@import '~bootstrap/scss/bootstrap';
+//@import '~bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap/scss/bootstrap';
 
 body {
     background-color: #deeed9;

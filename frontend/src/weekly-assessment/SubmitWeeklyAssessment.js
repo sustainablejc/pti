@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-import { Button, Form, Row, Col } from 'react-bootstrap';
+import { Alert, Button, Form, Row, Col, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import { useAuthState } from '../Context';
 
 import { Material, MaterialHeader } from '../common/Materials';
 import { Formik, FieldArray } from 'formik';
@@ -12,23 +13,80 @@ export function SubmitWeeklyAssessment() {
 
     const [redirect, setRedirect] = useState(false);
     const [materials, setMaterials] = useState([]);
+    const [showAlert, setShowAlert] = useState();
 
-    const handleSubmit = (data) => {
-        console.log(data);
-        /*
+    const {user, token} = useAuthState();
+
+    const handleSubmit = (data, {resetForm, setErrors, setStatus}) => {
+        const formattedData = {
+            ...data,
+            weeklyMaterials: data.materials.map(x => {
+                const isWeight = x.weight != "";
+                const amount = isWeight
+                    ? x.weight
+                    : x.quantity;
+                const units = isWeight
+                    ? "lbs"
+                    : "quantity";
+                return {
+                    materialId: x.materialId,
+                    amount: amount,
+                    units: units
+                };
+            }),
+        }
         axios.post(
-            `http://localhost:8000/api/v1/weekly-assessment/`,
-            {...data, 'user': 1, 'weeklyMaterials': materials}
-            ).then(res => {
-                setRedirect(true);
+            'http://localhost:8000/api/v1/weekly-assessment/',
+            formattedData, {
+                headers: {'Authorization': 'Token ' + token}
+            }).then(res => {
+                resetForm({});
+                setStatus({success: true});
+                setShowAlert(true);
+                //setRedirect(true);
             }).catch(err => {
-                debugger;
+                setStatus({success: false});
+                setErrors({submit: "There was a problem submitting your assessment"});
+                setShowAlert(true);
             });
-        */
     };
 
     if (redirect) {
         return <Redirect to="/" />;
+    }
+
+    const validate = (values) => {
+        const errors = {};
+
+        values.materials.forEach((x, index) => {
+            const name = `materials.${index}`;
+            if (x.materialId == "") {
+                errors[name] = "please select a material";
+                return;
+            }
+
+            if (x.weight == "" && x.quantity == "") {
+                errors[name] = "please add a weight or quantity";
+                return;
+            }
+
+            if (x.weight != "" && x.quantity != "") {
+                errors[name] = "please add either a weight or quantity";
+                return;
+            }
+
+            if (x.weight != "" && x.weight <= 0) {
+                errors[name] = "weight cannot be negative";
+                return;
+            }
+
+            if (x.quantity != "" && x.quantity <= 0) {
+                errors[name] = "quantity cannot be negative";
+                return;
+            }
+        });
+
+        return errors;
     }
 
     return (
@@ -43,9 +101,10 @@ export function SubmitWeeklyAssessment() {
                     reusedItems: '',
                     learnedThisWeek: '',
                     comments: '',
-                    materials: [{'materialId': '', 'weight': ''}]
+                    materials: [{'materialId': '', 'weight': '', 'quantity': ''}]
                 }}
                 onSubmit={handleSubmit}
+                validate={validate}
             >
             {props => {
 
@@ -58,10 +117,25 @@ export function SubmitWeeklyAssessment() {
                     handleChange,
                     handleBlur,
                     handleSubmit,
-                    handleReset
+                    handleReset,
+                    resetForm,
+                    status
                 } = props;
 
                 return (
+                <>
+                    {!!status && !!status.success && showAlert
+                        ? (<Alert variant="success" onClose={() => setShowAlert(false)} dismissible>
+                            <Alert.Heading>Successfully Created Assessment</Alert.Heading>
+                        </Alert>)
+                        : ''
+                    }
+                    {!!status && !!status.success == false && showAlert
+                        ? (<Alert variant="success" onClose={() => setShowAlert(false)} dismissible>
+                            <Alert.Heading>Successfully Created Assessment</Alert.Heading>
+                        </Alert>)
+                        : ''
+                    }
                 <Form onSubmit={handleSubmit}>
                     <FieldArray name="materials">
                         {({insert, remove, push}) => (
@@ -79,34 +153,37 @@ export function SubmitWeeklyAssessment() {
                                             add={() => push(
                                                 {'materialId': '', 'weight': '', 'quantity': ''}
                                             )}
+                                            error={errors[`materials.${index}`]}
+                                            dirty={dirty}
                                             values={values.materials} />
                                 ))}
                             </div>
                         )}
                     </FieldArray>
                     <Form.Group as={Row}>
-                        <Form.Label column xs="3">I composted!</Form.Label>
-                        <Col sm="1">
-                            <Form.Control
+                        <Col sm="7" md="3">
+                            <Form.Switch
+                                label="I composted!"
+                                id="compostSwitch"
                                 type="checkbox"
                                 name="didCompost"
-                                value={values.didCompost}
+                                checked={values.didCompost}
                                 onChange={handleChange} />
                         </Col>
-
-                        <Form.Label column xs="3">I reused an item!</Form.Label>
-                        <Col sm="1">
-                            <Form.Control
+                        <Col sm="7" md="3">
+                            <Form.Switch
+                                label="I reused an item!"
+                                id="reuseSwitch"
                                 type="checkbox"
                                 name="didReuseItems"
-                                value={values.didReuseItems}
+                                checked={values.didReuseItems}
                                 onChange={handleChange} />
                         </Col>
                     </Form.Group>
                     {!values.didCompost
                         ?  (<Form.Group as={Row}>
-                            <Form.Label column xs="3">I did not compost because ...</Form.Label>
-                            <Col sm="5">
+                            <Form.Label column sm="7" md="3">I did not compost because ...</Form.Label>
+                            <Col sm="7" md="5">
                                 <Form.Control
                                     as="textarea"
                                     name="compostReason"
@@ -117,8 +194,8 @@ export function SubmitWeeklyAssessment() {
                         : ''}
                     {values.didReuseItems
                         ? (<Form.Group as={Row}>
-                            <Form.Label column xs="3">I reused ...</Form.Label>
-                            <Col xs="5">
+                            <Form.Label column sm="7" md="3">I reused ...</Form.Label>
+                            <Col sm="7" md="5">
                                 <Form.Control
                                     as="textarea"
                                     name="reusedItems"
@@ -128,8 +205,8 @@ export function SubmitWeeklyAssessment() {
                         </Form.Group>)
                         : ''}
                     <Form.Group as={Row}>
-                        <Form.Label column xs="3">This week I learned ...</Form.Label>
-                        <Col xs="5">
+                        <Form.Label column sm="7" md="3">This week I learned ...</Form.Label>
+                        <Col sm="7" md="5">
                             <Form.Control
                                 as="textarea"
                                 name="learnedThisWeek"
@@ -138,8 +215,8 @@ export function SubmitWeeklyAssessment() {
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row}>
-                        <Form.Label column xs="3">I would like to add ...</Form.Label>
-                        <Col xs="5">
+                        <Form.Label column sm="7" md="3">I would like to add ...</Form.Label>
+                        <Col sm="7" md="5">
                             <Form.Control
                                 as="textarea"
                                 name="comments"
@@ -148,10 +225,18 @@ export function SubmitWeeklyAssessment() {
                         </Col>
                     </Form.Group>
                     <div className="mr-auto">
-                        <Button type="submit" variant="secondary" onClick={handleSubmit}>Submit</Button>{' '}
-                        <Button type="submit" variant="danger">Cancel</Button>
+                        <Button
+                            disabled={
+                                !dirty
+                             || Object.keys(errors).length != 0
+                             || token == null
+                             || token == ""}
+                            type="submit"
+                            variant="secondary"
+                            onClick={handleSubmit}>Submit</Button>{' '}
                     </div>
-                </Form>);
+                </Form>
+            </>);
             }}
             </Formik>
         </div>

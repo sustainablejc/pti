@@ -43,6 +43,7 @@ class WeeklyAssessmentMaterialSerializer(serializers.ModelSerializer):
 
 class WeeklyAssessmentSerializer(serializers.ModelSerializer):
     weekly_materials = WeeklyAssessmentMaterialSerializer(many=True)
+    user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = WeeklyAssessment

@@ -1,14 +1,16 @@
 import { Navigation } from './Navigation';
 
 import './App.css';
-//import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/custom.scss';
+import { AuthProvider } from './Context';
 
 
 function App() {
   return (
     <div className="app">
-      <Navigation />
+      <AuthProvider>
+        <Navigation />
+      </AuthProvider>
     </div>
   );
 }
