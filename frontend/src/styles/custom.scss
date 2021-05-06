@@ -12,9 +12,20 @@ $warning-color: #d99243; // yellow text
 
 $navbar-nav-link-padding-x: 1rem;
 
-body{ height:100vh; margin:0; }
+body{ min-height:100vh; margin:0; position: relative; }
 
-footer{ min-height:30px; text-align: center }
+#id {
+    padding-bottom: 30px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    background-color: #deeed9;
+    min-height:30px;
+    text-align: center;
+    width: 100%;
+}
 
 .app {
     background-color: #deeed9;
@@ -167,6 +178,14 @@ footer{ min-height:30px; text-align: center }
 
 .navbar {
     background-color: #f6f6f6;
+}
+
+/*
+    Suggested Apps Page
+*/
+.information-page {
+
+    margin-top: 20px;
 }
 
 // Array of colors from _variables.scss
