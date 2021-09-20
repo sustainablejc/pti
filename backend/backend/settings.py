@@ -20,12 +20,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = '_2$j0*y*scy=u*ujvv-@swb0h0-3hovr0(qm$$u95)ky3awd$a'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '10.0.2.2',  # this is for android development
+]
 
 # Application definition
 
@@ -154,7 +157,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [ # new
         'rest_framework.authentication.TokenAuthentication', # new
-        'rest_framework.authentication.SessionAuthentication', # new
+        #'rest_framework.authentication.SessionAuthentication', # new
     ],
 }
 
@@ -163,4 +166,4 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000'
 )
 
-SITE_ID = 3
+SITE_ID = 4

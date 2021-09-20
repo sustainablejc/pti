@@ -4,7 +4,7 @@ import random
 from django.core.management.base import BaseCommand
 
 from django.contrib.auth.models import User
-from pti.models import Material, WeeklyAssessment, WeeklyAssessment, WeeklyAssessmentMaterial
+from pti.models import Material, Measurement, MeasurementMaterial
 
 
 class Command(BaseCommand):
@@ -81,28 +81,28 @@ class Command(BaseCommand):
                 - datetime.timedelta(weeks=i)
                 + datetime.timedelta(days=random.randint(-2, 2))
             )
-            weekly_assessment = WeeklyAssessment.objects.create(
+            measurement = Measurement.objects.create(
                 date=date,
                 user=user,
                 did_compost=True,
                 did_reuse_items=True,
             )
 
-            materials = WeeklyAssessmentMaterial.objects.bulk_create([
-                WeeklyAssessmentMaterial(
-                    weekly_assessment=weekly_assessment,
+            materials = MeasurementMaterial.objects.bulk_create([
+                MeasurementMaterial(
+                    measurement=measurement,
                     material=glass,
                     material_id=glass.id,
                     amount=random.randint(0, 5),
                     units='lbs'
-                ), WeeklyAssessmentMaterial(
-                    weekly_assessment=weekly_assessment,
+                ), MeasurementMaterial(
+                    measurement=measurement,
                     material=plastic,
                     material_id=plastic.id,
                     amount=random.randint(0, 5),
                     units='lbs'
-                ), WeeklyAssessmentMaterial(
-                    weekly_assessment=weekly_assessment,
+                ), MeasurementMaterial(
+                    measurement=measurement,
                     material=nuclear_waste,
                     material_id=nuclear_waste.id,
                     amount=random.randint(0, 5),

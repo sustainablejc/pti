@@ -3,10 +3,10 @@ from django.urls import reverse
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Material, WeeklyAssessment, User
+from .models import Material, Measurement, User
 
 
-class WeeklyAssessmentTest(APITestCase):
+class MeasurementTest(APITestCase):
     def setUp(self):
         self.user = User.objects.create(
             username='test user',
@@ -32,8 +32,8 @@ class WeeklyAssessmentTest(APITestCase):
             )
         ])
 
-    def test_create_weekly_assessment(self):
-        url = reverse('weekly-assessment-list')
+    def test_create_measurement(self):
+        url = reverse('measurement-list')
 
         materials = Material.objects.all()
 
@@ -89,7 +89,7 @@ class WeeklyAssessmentTest(APITestCase):
         response = self.client.get(url, format='json')
         # these two should be the same
         weekly_assessments_json = response.json()
-        weekly_assessments = WeeklyAssessment.objects.all()
+        weekly_assessments = Measurement.objects.all()
 
         import ipdb; ipdb.set_trace() # BREAKPOINT
         pass

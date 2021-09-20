@@ -20,7 +20,7 @@ class Material(models.Model):
     is_recyclable = models.BooleanField()
 
 
-class WeeklyAssessment(models.Model):
+class Measurement(models.Model):
     """
     Placeholder for the weekly PTI assessments
     """
@@ -38,17 +38,36 @@ class WeeklyAssessment(models.Model):
     comments = models.TextField(blank=True, null=True)
 
 
-class WeeklyAssessmentMaterial(models.Model):
+class MeasurementMaterial(models.Model):
     """
     The weekly assessment amounts by material
     """
-    weekly_assessment = models.ForeignKey(
-        WeeklyAssessment,
+    measurement = models.ForeignKey(
+        Measurement,
         on_delete=models.CASCADE,
-        related_name='weekly_materials'
+        related_name='measurement_materials'
     )
     material = models.ForeignKey(Material, on_delete=models.PROTECT)
 
     amount = models.FloatField()
     units = models.CharField(max_length=10)
+
+
+class Unit(models.Model):
+    """
+    Base units of weight
+    """
+    name = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=10)
+
+
+class UserUnit(models.Model):
+    """
+    The unit type with weight, connected to user
+    """
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+
+    unit = models.ForeignKey(Unit, on_delete=models.SET_NULL, null=True)
+    value = models.FloatField()
 

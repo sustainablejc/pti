@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Material, SignUp, WeeklyAssessment, WeeklyAssessmentMaterial
+from .models import BaseUnit, Material, SignUp, Measurement, MeasurementMaterial, Unit, UserUnit
 
 
 class SignUpSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class MaterialSerializer(serializers.ModelSerializer):
         )
 
 
-class WeeklyAssessmentMaterialSerializer(serializers.ModelSerializer):
+class MeasurementMaterialSerializer(serializers.ModelSerializer):
     material = MaterialSerializer(read_only=True)
     material_id = serializers.PrimaryKeyRelatedField(
         source='material',
@@ -32,7 +32,7 @@ class WeeklyAssessmentMaterialSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = WeeklyAssessmentMaterial
+        model = MeasurementMaterial
         fields = (
             'material',
             'material_id',
@@ -41,16 +41,16 @@ class WeeklyAssessmentMaterialSerializer(serializers.ModelSerializer):
         )
 
 
-class WeeklyAssessmentSerializer(serializers.ModelSerializer):
-    weekly_materials = WeeklyAssessmentMaterialSerializer(many=True)
+class MeasurementSerializer(serializers.ModelSerializer):
+    materials = MeasurementMaterialSerializer(many=True)
     user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
-        model = WeeklyAssessment
+        model = Measurement
         fields = (
             'user',
             'date',
-            'weekly_materials',
+            'materials',
             'did_compost',
             'compost_reason',
             'did_reuse_items',
@@ -60,11 +60,37 @@ class WeeklyAssessmentSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        materials = validated_data.pop('weekly_materials')
-        weekly_assessment = WeeklyAssessment.objects.create(**validated_data)
+        materials = validated_data.pop('materials')
+        measurement = Measurement.objects.create(**validated_data)
         for material in materials:
-            WeeklyAssessmentMaterial.objects.create(
-                weekly_assessment=weekly_assessment,
+            MeasurementMaterial.objects.create(
+                measurement=measurement,
                 **material
             )
-        return weekly_assessment
+        return measurement
+
+
+class UnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unit
+        fields = "__all__"
+
+
+class UserUnitSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    unit = UnitSerializer(many=False, read_only=True)
+    unit_id = serializers.PrimaryKeyRelatedField(
+        source='unit',
+        queryset=Unit.objects.all(),
+        write_only=True
+    )
+
+    class Meta:
+        model = Unit
+        fields = (
+            'user',
+            'name',
+            'value',
+            'unit',
+            'unit_id',
+        )

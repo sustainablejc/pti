@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
 from .views import FacebookLogin, GoogleLogin
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
     path('api/', include('rest_framework.urls')),
     path('rest-auth/facebook/', FacebookLogin.as_view(), name='fb_login'),
     path('rest-auth/google/', GoogleLogin.as_view(), name='google_login'),
+    path(r'^accounts/', include('allauth.urls'), name='socialaccount_signup'),
 ]
